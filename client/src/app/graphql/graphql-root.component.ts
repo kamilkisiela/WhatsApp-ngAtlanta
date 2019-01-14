@@ -15,6 +15,7 @@ import {
 import GetChats from './queries/get-chats.graphql';
 import GetChat from './queries/get-chat.graphql';
 import NewMessage from './queries/new-message.graphql';
+import { ToggleStar } from './chat.actions';
 
 @Component({
   selector: 'app-graphql-root',
@@ -85,7 +86,9 @@ export class GraphQLRootComponent {
       .subscribe();
   }
 
-  toggleStar(chatId: ID) {}
+  toggleStar(chatId: ID) {
+    this.loona.dispatch(new ToggleStar(chatId));
+  }
 
   loadChats() {
     this.chats = this.loona

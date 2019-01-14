@@ -2,8 +2,20 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Chat, Pages, PageChangeEvent, MessageEvent, ID, pickOtherUser } from '../whatsapp';
-import { LoadChats, LoadMessages, SendMessage } from './state/chat.actions';
+import {
+  Chat,
+  Pages,
+  PageChangeEvent,
+  MessageEvent,
+  ID,
+  pickOtherUser,
+} from '../whatsapp';
+import {
+  LoadChats,
+  LoadMessages,
+  SendMessage,
+  ToggleStar,
+} from './state/chat.actions';
 import { AppState } from './app.state';
 
 @Component({
@@ -56,7 +68,9 @@ export class NgRxRootComponent {
     );
   }
 
-  toggleStar(chatId: ID) {}
+  toggleStar(chatId: ID) {
+    this.store.dispatch(new ToggleStar({ chatId }));
+  }
 
   loadChats() {
     this.store.dispatch(new LoadChats());

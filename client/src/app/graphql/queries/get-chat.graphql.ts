@@ -6,6 +6,7 @@ export default gql`
   query getChat($id: ID!) {
     chat(id: $id) @rest(type: "Chat", path: "/chats/{args.id}") {
       id @export(as: "chatId")
+      starred @client
       members @rest(type: "[User]", path: "/chats/:chatId/members") {
         ...UserFragment
       }
