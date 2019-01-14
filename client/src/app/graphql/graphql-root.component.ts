@@ -3,9 +3,17 @@ import { Loona } from '@loona/angular';
 import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 
-import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
+import {
+  Chat,
+  Pages,
+  PageChangeEvent,
+  MessageEvent,
+  ID,
+  pickOtherUser,
+} from '../whatsapp';
 import GetChats from './queries/get-chats.graphql';
 import GetChat from './queries/get-chat.graphql';
+import NewMessage from './queries/new-message.graphql';
 
 @Component({
   selector: 'app-graphql-root',
@@ -43,7 +51,20 @@ export class GraphQLRootComponent {
     }
   }
 
-  onMessage(event: MessageEvent) {}
+  onMessage(event: MessageEvent) {
+    const text = event.text;
+    const recipient = pickOtherUser(event.chat);
+
+    this.loona
+      .mutate(NewMessage, {
+        id: event.chat.id,
+        input: {
+          text,
+          recipient: recipient.id,
+        },
+      })
+      .subscribe();
+  }
 
   toggleStar(chatId: ID) {}
 

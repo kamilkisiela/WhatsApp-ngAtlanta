@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
-import { LoadChats, LoadMessages } from './state/chat.actions';
+import { Chat, Pages, PageChangeEvent, MessageEvent, ID, pickOtherUser } from '../whatsapp';
+import { LoadChats, LoadMessages, SendMessage } from './state/chat.actions';
 import { AppState } from './app.state';
 
 @Component({
@@ -46,7 +46,15 @@ export class NgRxRootComponent {
     }
   }
 
-  onMessage(event: MessageEvent) {}
+  onMessage(event: MessageEvent) {
+    this.store.dispatch(
+      new SendMessage({
+        chatId: event.chat.id,
+        text: event.text,
+        recipient: pickOtherUser(event.chat).id,
+      }),
+    );
+  }
 
   toggleStar(chatId: ID) {}
 

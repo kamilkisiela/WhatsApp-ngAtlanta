@@ -9,6 +9,10 @@ export enum ActionTypes {
   LoadMessages = '[Chat] Load messages',
   LoadMessagesSuccess = '[Chat] Load messages Success',
   LoadMessagesFailure = '[Chat] Load messages Failure',
+
+  SendMessage = '[Chat] Send message',
+  SendMessageSuccess = '[Chat] Send message Success',
+  SendMessageFailure = '[Chat] Send message Failure',
 }
 
 // All chats
@@ -56,10 +60,46 @@ export class LoadMessagesFailure implements Action {
   readonly type = ActionTypes.LoadMessagesFailure;
 }
 
+// New Message
+
+export class SendMessage implements Action {
+  readonly type = ActionTypes.SendMessage;
+
+  constructor(
+    public payload: {
+      chatId: ID;
+      text: string;
+      recipient: ID;
+    },
+  ) {}
+}
+
+export class SendMessageSuccess implements Action {
+  readonly type = ActionTypes.SendMessageSuccess;
+  constructor(
+    public payload: {
+      chatId: ID;
+      message: Message;
+    },
+  ) {}
+}
+
+export class SendMessageFailure implements Action {
+  readonly type = ActionTypes.SendMessageFailure;
+  constructor(
+    public payload: {
+      chatId: ID;
+    },
+  ) {}
+}
+
 export type ChatAction =
   | LoadChats
   | LoadChatsSuccess
   | LoadChatsFailure
   | LoadMessages
   | LoadMessagesSuccess
-  | LoadMessagesFailure;
+  | LoadMessagesFailure
+  | SendMessage
+  | SendMessageSuccess
+  | SendMessageFailure;
