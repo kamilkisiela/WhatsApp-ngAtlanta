@@ -5,6 +5,7 @@ import { pluck } from 'rxjs/operators';
 
 import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
 import GetChats from './queries/get-chats.graphql';
+import GetChat from './queries/get-chat.graphql';
 
 @Component({
   selector: 'app-graphql-root',
@@ -52,5 +53,11 @@ export class GraphQLRootComponent {
       .valueChanges.pipe(pluck('data', 'chats'));
   }
 
-  loadChat(id: ID) {}
+  loadChat(id: ID) {
+    this.chat = this.loona
+      .query(GetChat, {
+        id,
+      })
+      .valueChanges.pipe(pluck('data', 'chat'));
+  }
 }

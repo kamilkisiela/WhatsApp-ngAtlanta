@@ -14,6 +14,21 @@ export function chatReducer(
       return chats;
     }
 
+    case ActionTypes.LoadMessagesSuccess: {
+      const { chatId, messages } = action.payload;
+
+      return state.map(chat => {
+        if (chat.id === chatId) {
+          return {
+            ...chat,
+            messages,
+          };
+        }
+
+        return chat;
+      });
+    }
+
     default:
       return state;
   }
