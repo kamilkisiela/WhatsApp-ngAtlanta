@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
 import { of, combineLatest } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
+
+import { AppState } from './app.state';
 
 function api(path: string) {
   return `http://localhost:4000${path}`;
@@ -9,14 +12,24 @@ function api(path: string) {
 
 @Injectable()
 export class ChatsService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private store: Store<AppState>) {}
 
   getChats() {
-    this.fetchChats().pipe(
-      mergeMap(chats =>
-        combineLatest(chats.map(chat => this.resolveChat(chat))),
-      ),
-    );
+    return this.store
+      .select(state => state.chats)
+      .pipe(
+        mergeMap(chats => {
+          if (chats && chats.length) {
+            return of(chats);
+          }
+
+          return this.fetchChats().pipe(
+            mergeMap(chats =>
+              combineLatest(chats.map(chat => this.resolveChat(chat))),
+            ),
+          );
+        }),
+      );
   }
 
   getMessages(chatId: ID) {
