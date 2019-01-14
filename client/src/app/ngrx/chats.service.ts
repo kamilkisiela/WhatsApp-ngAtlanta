@@ -19,12 +19,20 @@ export class ChatsService {
     );
   }
 
+  getMessages(chatId: ID) {
+    return this.fetchChatMessages(chatId);
+  }
+
   private fetchChats() {
     return this.http.get<ChatsResponse>(api('/chats'));
   }
 
   private fetchUser(link: string) {
     return this.http.get<UserResponse>(link);
+  }
+
+  private fetchChatMessages(id: string) {
+    return this.http.get<ChatMessagesResponse>(api(`/chats/${id}/messages`));
   }
 
   private resolveChat(chat: ChatResponse) {

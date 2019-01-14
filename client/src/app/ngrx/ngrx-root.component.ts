@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
-import { LoadChats } from './state/chat.actions';
+import { LoadChats, LoadMessages } from './state/chat.actions';
 import { AppState } from './app.state';
 
 @Component({
@@ -55,5 +55,13 @@ export class NgRxRootComponent {
     this.chats = this.store.select(state => state.chats);
   }
 
-  loadChat(id: ID) {}
+  loadChat(id: ID) {
+    this.store.dispatch(
+      new LoadMessages({
+        chatId: id,
+      }),
+    );
+
+    this.chat = this.store.select(state => state.chats.find(c => c.id === id));
+  }
 }

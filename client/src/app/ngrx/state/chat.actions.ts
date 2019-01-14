@@ -5,6 +5,10 @@ export enum ActionTypes {
   LoadChats = '[Chats] Load',
   LoadChatsSuccess = '[Chats] Load Success',
   LoadChatsFailure = '[Chats] Load Failure',
+
+  LoadMessages = '[Chat] Load messages',
+  LoadMessagesSuccess = '[Chat] Load messages Success',
+  LoadMessagesFailure = '[Chat] Load messages Failure',
 }
 
 // All chats
@@ -26,4 +30,36 @@ export class LoadChatsFailure implements Action {
   readonly type = ActionTypes.LoadChatsFailure;
 }
 
-export type ChatAction = LoadChats | LoadChatsSuccess | LoadChatsFailure;
+// Chat's messages
+
+export class LoadMessages implements Action {
+  readonly type = ActionTypes.LoadMessages;
+
+  constructor(
+    public payload: {
+      chatId: ID;
+    },
+  ) {}
+}
+
+export class LoadMessagesSuccess implements Action {
+  readonly type = ActionTypes.LoadMessagesSuccess;
+  constructor(
+    public payload: {
+      chatId: ID;
+      messages: Message[];
+    },
+  ) {}
+}
+
+export class LoadMessagesFailure implements Action {
+  readonly type = ActionTypes.LoadMessagesFailure;
+}
+
+export type ChatAction =
+  | LoadChats
+  | LoadChatsSuccess
+  | LoadChatsFailure
+  | LoadMessages
+  | LoadMessagesSuccess
+  | LoadMessagesFailure;
