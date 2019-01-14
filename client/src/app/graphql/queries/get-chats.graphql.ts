@@ -4,13 +4,13 @@ import { UserFragment, MessageFragment } from './fragments.graphql';
 
 export default gql`
   {
-    chats @rest(type: "Chat", path: "/chats") {
-      id @export(as: "chatId")
+    chats {
+      id
       starred @client
-      members @rest(type: "[User]", path: "/chats/:chatId/members") {
+      members {
         ...UserFragment
       }
-      recentMessage @type(name: "Message") {
+      recentMessage {
         ...MessageFragment
       }
     }

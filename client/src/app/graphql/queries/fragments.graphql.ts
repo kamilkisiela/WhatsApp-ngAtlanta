@@ -12,10 +12,10 @@ export const MessageFragment = gql`
     id
     text
     createdAt
-    sender @type(name: "User") {
+    sender {
       ...UserFragment
     }
-    recipient @type(name: "User") {
+    recipient {
       ...UserFragment
     }
   }

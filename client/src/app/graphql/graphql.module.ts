@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoonaModule, LOONA_CACHE, LoonaLink } from '@loona/angular';
 import { ApolloModule, APOLLO_OPTIONS } from 'apollo-angular';
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { RestLink } from 'apollo-link-rest';
+import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
 
 import { GraphQLRootComponent } from './graphql-root.component';
 import { WhatsappModule } from '../whatsapp';
@@ -26,6 +26,7 @@ const routes: Routes = [
     WhatsappModule,
     SharedModule,
     ApolloModule,
+    HttpLinkModule,
     LoonaModule.forRoot([ChatState]),
   ],
   providers: [
@@ -35,14 +36,15 @@ const routes: Routes = [
     },
     {
       provide: APOLLO_OPTIONS,
-      useFactory(cache: InMemoryCache, loona: LoonaLink) {
-        const rest = new RestLink({ uri: 'http://localhost:4000' });
+      useFactory(cache: InMemoryCache, loona: LoonaLink, http: HttpLink) {
         return {
           cache,
-          link: loona.concat(rest),
+          link: loona.concat(http.create({
+            uri: 'http://localhost:4000/graphql'
+          })),
         };
       },
-      deps: [LOONA_CACHE, LoonaLink],
+      deps: [LOONA_CACHE, LoonaLink, HttpLink],
     },
   ],
 })
