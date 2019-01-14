@@ -29,6 +29,21 @@ export function chatReducer(
       });
     }
 
+    case ActionTypes.SendMessageSuccess: {
+      const { chatId, message } = action.payload;
+
+      return state.map(chat => {
+        if (chat.id === chatId) {
+          return {
+            ...chat,
+            messages: [...chat.messages, message],
+          };
+        }
+
+        return chat;
+      });
+    }
+
     default:
       return state;
   }

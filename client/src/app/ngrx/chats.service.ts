@@ -36,6 +36,13 @@ export class ChatsService {
     return this.fetchChatMessages(chatId);
   }
 
+  sendMessage(chatId: ID, text: string, recipientId: ID) {
+    return this.http.post<MessageResponse>(api(`/chats/${chatId}/message`), {
+      text,
+      recipient: recipientId,
+    });
+  }
+
   private fetchChats() {
     return this.http.get<ChatsResponse>(api('/chats'));
   }

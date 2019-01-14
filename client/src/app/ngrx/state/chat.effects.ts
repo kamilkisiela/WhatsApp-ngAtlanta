@@ -11,6 +11,8 @@ import {
   LoadChatsFailure,
   LoadMessagesSuccess,
   LoadMessagesFailure,
+  SendMessageSuccess,
+  SendMessageFailure,
 } from './chat.actions';
 import { User } from '../../whatsapp';
 import { ChatsService } from '../chats.service';
@@ -52,5 +54,24 @@ export class ChatEffects {
         ),
     ),
     catchError(() => of(new LoadMessagesFailure())),
+  );
+
+  @Effect()
+  send$: Observable<ChatAction> = this.actions$.pipe(
+    ofType(ActionTypes.SendMessage),
+    mergeMap(action => {
+      const { chatId, text, recipient } = action.payload;
+
+      return this.chats.sendMessage(chatId, text, recipient).pipe(
+        mergeMap(message => of(new SendMessageSuccess({ chatId, message }))),
+        catchError(() =>
+          of(
+            new SendMessageFailure({
+              chatId,
+            }),
+          ),
+        ),
+      );
+    }),
   );
 }
