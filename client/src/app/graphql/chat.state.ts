@@ -25,11 +25,15 @@ export class ChatState {
         if (!data.messages || !data.messages.length) {
           data.messages = [];
         }
-
-        data.messages.push({
+        
+        const message = {
           id,
           __typename: 'Message',
-        });
+        };
+
+
+        data.messages.push(message);
+        data.recentMessage = message;
       },
     );
   }

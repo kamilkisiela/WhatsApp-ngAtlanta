@@ -11,6 +11,7 @@ export enum ActionTypes {
   LoadMessagesFailure = '[Chat] Load messages Failure',
 
   SendMessage = '[Chat] Send message',
+  SendMessageOptimistic = '[Chat] Send message Optimistic',
   SendMessageSuccess = '[Chat] Send message Success',
   SendMessageFailure = '[Chat] Send message Failure',
 }
@@ -74,11 +75,22 @@ export class SendMessage implements Action {
   ) {}
 }
 
+export class SendMessageOptimistic implements Action {
+  readonly type = ActionTypes.SendMessageOptimistic;
+  constructor(
+    public payload: {
+      chatId: ID;
+      message: Message;
+    },
+  ) {}
+}
+
 export class SendMessageSuccess implements Action {
   readonly type = ActionTypes.SendMessageSuccess;
   constructor(
     public payload: {
       chatId: ID;
+      tempId: ID;
       message: Message;
     },
   ) {}
@@ -89,6 +101,7 @@ export class SendMessageFailure implements Action {
   constructor(
     public payload: {
       chatId: ID;
+      tempId: ID;
     },
   ) {}
 }
@@ -101,5 +114,6 @@ export type ChatAction =
   | LoadMessagesSuccess
   | LoadMessagesFailure
   | SendMessage
+  | SendMessageOptimistic
   | SendMessageSuccess
   | SendMessageFailure;
