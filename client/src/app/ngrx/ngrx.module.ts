@@ -5,8 +5,12 @@ import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 
 import { NgRxRootComponent } from './ngrx-root.component';
-import { SharedModule } from '../shared/shared.module';
 import { WhatsappModule } from '../whatsapp';
+import { SharedModule } from '../shared/shared.module';
+import { chatReducer } from './state/chat.reducer';
+import { ChatEffects } from './state/chat.effects';
+import { ChatsService } from './chats.service';
+import { AppState } from './app.state';
 
 const routes: Routes = [
   {
@@ -20,9 +24,13 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    SharedModule,
     WhatsappModule,
+    SharedModule,
+    StoreModule.forRoot<AppState>({
+      chats: chatReducer,
+    }),
+    EffectsModule.forRoot([ChatEffects]),
   ],
-  providers: [],
+  providers: [ChatsService],
 })
 export class NgRxModule {}

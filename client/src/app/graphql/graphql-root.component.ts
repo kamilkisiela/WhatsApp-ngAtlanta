@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 
 import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
+import GetChats from './queries/get-chats.graphql';
 
 @Component({
   selector: 'app-graphql-root',
@@ -15,7 +16,9 @@ import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
       (message)="onMessage($event)"
       (star)="toggleStar($event)"
       (page)="onPage($event)"
-    ></whatsapp>
+    >
+      <select-tool-button tool="loona"></select-tool-button>
+    </whatsapp>
   `,
 })
 export class GraphQLRootComponent {
@@ -23,7 +26,7 @@ export class GraphQLRootComponent {
   chats: Observable<Chat[]>;
   chat: Observable<Chat>;
 
-  constructor() {}
+  constructor(private loona: Loona) {}
 
   onPage(event: PageChangeEvent) {
     this.page = event.page;
@@ -43,7 +46,11 @@ export class GraphQLRootComponent {
 
   toggleStar(chatId: ID) {}
 
-  loadChats() {}
+  loadChats() {
+    this.chats = this.loona
+      .query(GetChats)
+      .valueChanges.pipe(pluck('data', 'chats'));
+  }
 
   loadChat(id: ID) {}
 }

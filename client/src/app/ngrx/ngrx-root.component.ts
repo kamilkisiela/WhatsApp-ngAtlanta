@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+
 import { Chat, Pages, PageChangeEvent, MessageEvent, ID } from '../whatsapp';
+import { LoadChats } from './state/chat.actions';
+import { AppState } from './app.state';
 
 @Component({
   selector: 'app-ngrx-root',
@@ -22,7 +26,7 @@ export class NgRxRootComponent {
   chats: Observable<Chat[]>;
   chat: Observable<Chat>;
 
-  constructor() {}
+  constructor(private store: Store<AppState>) {}
 
   onPage(event: PageChangeEvent) {
     this.page = event.page;
@@ -46,7 +50,10 @@ export class NgRxRootComponent {
 
   toggleStar(chatId: ID) {}
 
-  loadChats() {}
+  loadChats() {
+    this.store.dispatch(new LoadChats());
+    this.chats = this.store.select(state => state.chats);
+  }
 
   loadChat(id: ID) {}
 }
