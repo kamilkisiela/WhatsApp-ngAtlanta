@@ -14,6 +14,8 @@ export enum ActionTypes {
   SendMessageOptimistic = '[Chat] Send message Optimistic',
   SendMessageSuccess = '[Chat] Send message Success',
   SendMessageFailure = '[Chat] Send message Failure',
+
+  ToggleStar = '[Chat] Toggle star',
 }
 
 // All chats
@@ -106,6 +108,15 @@ export class SendMessageFailure implements Action {
   ) {}
 }
 
+export class ToggleStar implements Action {
+  readonly type = ActionTypes.ToggleStar;
+  constructor(
+    public payload: {
+      chatId: ID;
+    },
+  ) {}
+}
+
 export type ChatAction =
   | LoadChats
   | LoadChatsSuccess
@@ -116,4 +127,5 @@ export type ChatAction =
   | SendMessage
   | SendMessageOptimistic
   | SendMessageSuccess
-  | SendMessageFailure;
+  | SendMessageFailure
+  | ToggleStar;

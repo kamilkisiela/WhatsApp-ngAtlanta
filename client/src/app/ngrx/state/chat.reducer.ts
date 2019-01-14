@@ -81,6 +81,19 @@ export function chatReducer(
       });
     }
 
+    case ActionTypes.ToggleStar: {
+      const { chatId } = action.payload;
+
+      return state.map(chat =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              starred: !chat.starred,
+            }
+          : chat,
+      );
+    }
+
     default:
       return state;
   }
