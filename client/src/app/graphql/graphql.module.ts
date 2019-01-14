@@ -8,6 +8,7 @@ import { RestLink } from 'apollo-link-rest';
 
 import { GraphQLRootComponent } from './graphql-root.component';
 import { WhatsappModule } from '../whatsapp';
+import { SharedModule } from '../shared/shared.module';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     WhatsappModule,
+    SharedModule,
     ApolloModule,
     LoonaModule.forRoot(),
   ],
