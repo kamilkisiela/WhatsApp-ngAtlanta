@@ -29,14 +29,51 @@ export function chatReducer(
       });
     }
 
-    case ActionTypes.SendMessageSuccess: {
+    case ActionTypes.SendMessageOptimistic: {
       const { chatId, message } = action.payload;
+
+      return state.map(chat => {
+        if (chat.id === chatId) {
+          const messages = chat.messages || [];
+
+          return {
+            ...chat,
+            messages: [...messages, message],
+          };
+        }
+
+        return chat;
+      });
+    }
+
+    case ActionTypes.SendMessageSuccess: {
+      const { chatId, tempId, message } = action.payload;
+
+      return state.map(chat => {
+        if (chat.id === chatId) {
+          const messages = chat.messages.map(m =>
+            m.id === tempId ? message : m,
+          );
+
+          return {
+            ...chat,
+            messages,
+            recentMessage: message,
+          };
+        }
+
+        return chat;
+      });
+    }
+
+    case ActionTypes.SendMessageFailure: {
+      const { chatId, tempId } = action.payload;
 
       return state.map(chat => {
         if (chat.id === chatId) {
           return {
             ...chat,
-            messages: [...chat.messages, message],
+            messages: chat.messages.filter(m => m.id !== tempId),
           };
         }
 

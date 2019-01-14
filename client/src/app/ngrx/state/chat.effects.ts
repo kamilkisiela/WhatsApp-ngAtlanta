@@ -13,6 +13,7 @@ import {
   LoadMessagesFailure,
   SendMessageSuccess,
   SendMessageFailure,
+  SendMessageOptimistic,
 } from './chat.actions';
 import { User } from '../../whatsapp';
 import { ChatsService } from '../chats.service';
@@ -57,21 +58,66 @@ export class ChatEffects {
   );
 
   @Effect()
-  send$: Observable<ChatAction> = this.actions$.pipe(
+  optimistic$: Observable<ChatAction> = this.actions$.pipe(
     ofType(ActionTypes.SendMessage),
     mergeMap(action => {
       const { chatId, text, recipient } = action.payload;
 
-      return this.chats.sendMessage(chatId, text, recipient).pipe(
-        mergeMap(message => of(new SendMessageSuccess({ chatId, message }))),
-        catchError(() =>
-          of(
-            new SendMessageFailure({
+      function selectMemberIf(condition: (m: User) => boolean) {
+        return (state: AppState) =>
+          state.chats.find(c => c.id === chatId).members.find(condition);
+      }
+
+      const recipient$ = this.store$
+        .select(selectMemberIf(m => m.id === recipient))
+        .pipe(take(1));
+      const sender$ = this.store$
+        .select(selectMemberIf(m => m.id !== recipient))
+        .pipe(take(1));
+
+      return combineLatest([recipient$, sender$]).pipe(
+        mergeMap(([recipient, sender]) => {
+          return of(
+            new SendMessageOptimistic({
               chatId,
+              message: {
+                id: Math.random()
+                  .toString(16)
+                  .substr(2),
+                createdAt: new Date().toString(),
+                text,
+                sender,
+                recipient,
+              },
             }),
-          ),
-        ),
+          );
+        }),
       );
+    }),
+  );
+
+  @Effect()
+  send$: Observable<ChatAction> = this.actions$.pipe(
+    ofType(ActionTypes.SendMessageOptimistic),
+    mergeMap(action => {
+      const { chatId, message } = action.payload;
+      const tempId = message.id;
+
+      return this.chats
+        .sendMessage(chatId, message.text, message.recipient.id)
+        .pipe(
+          mergeMap(message =>
+            of(new SendMessageSuccess({ chatId, tempId, message })),
+          ),
+          catchError(() =>
+            of(
+              new SendMessageFailure({
+                chatId,
+                tempId,
+              }),
+            ),
+          ),
+        );
     }),
   );
 }

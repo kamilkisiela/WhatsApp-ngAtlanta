@@ -10,6 +10,7 @@ import {
   MessageEvent,
   ID,
   pickOtherUser,
+  pickOwner,
 } from '../whatsapp';
 import GetChats from './queries/get-chats.graphql';
 import GetChat from './queries/get-chat.graphql';
@@ -54,15 +55,33 @@ export class GraphQLRootComponent {
   onMessage(event: MessageEvent) {
     const text = event.text;
     const recipient = pickOtherUser(event.chat);
+    const sender = pickOwner(event.chat);
 
     this.loona
-      .mutate(NewMessage, {
-        id: event.chat.id,
-        input: {
-          text,
-          recipient: recipient.id,
+      .mutate(
+        NewMessage,
+        {
+          id: event.chat.id,
+          input: {
+            text,
+            recipient: recipient.id,
+          },
         },
-      })
+        {
+          optimisticResponse: {
+            newMessage: {
+              __typename: 'Message',
+              id: Math.random()
+                .toString(16)
+                .substr(2),
+              text,
+              createdAt: new Date(),
+              sender,
+              recipient,
+            },
+          },
+        },
+      )
       .subscribe();
   }
 
